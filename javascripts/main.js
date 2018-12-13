@@ -129,8 +129,6 @@ function loadNewData(event) {
     svg2.selectAll("*").remove();
     svg3.selectAll("*").remove();
     fileName = this.options[this.selectedIndex].text;
-    console.log("Filename:");
-    console.log(fileName);
     loadData();
 }
 function getInputFile(){
@@ -543,7 +541,7 @@ function draw(data, pop){
         .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Weighted Display Rate: " + weightedRate.toFixed(2))
         .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Average Normalized Frequency: " + averageNormFreq.toFixed(3) );
 
-    console.log(avgTfidf.toFixed(2), compactness.toFixed(2), ratio.toFixed(2), weightedRate.toFixed(2), averageNormFreq.toFixed(3))
+    // console.log(avgTfidf.toFixed(2), compactness.toFixed(2), ratio.toFixed(2), weightedRate.toFixed(2), averageNormFreq.toFixed(3))
     ;
 
     // ============ Get APPROXIMATE AREA ============
