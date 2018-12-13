@@ -162,7 +162,7 @@ function draw(data, pop){
 
     // var width = (dataWidth > minWidth) ? dataWidth:minWidth;
 
-    var width = data.length*interval ;
+    var width = minWidth * 3 ;
     // var width = 1.5 * minWidth;
     document.getElementById("mainsvg").setAttribute("width",width);
     var font = "Arial";
