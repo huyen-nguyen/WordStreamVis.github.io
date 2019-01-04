@@ -1,14 +1,132 @@
-#holder1 {
-    position:absolute;
+body {
+    background-color: #eeeeee;
+    font-family:  Arial, sans-serif;
+}
+
+
+.title {
+    font-size: 30px;
+    font-weight: bold;
+    padding: 50px 20px 26px 35px;
+    position: fixed;
+    background-color: white;
+    top: -10px;
+    width: -webkit-fill-available;
+    margin: -10px 0 0 -10px;
+    box-shadow: 5px 10px 18px #bcbcbc;
+}
+#menu{
+    background-color: transparent;
+}
+.cp {
+    position: absolute;
+    top: 100px;
+    background-color: white;
+    border: 1px solid #cbcbcb;
+    padding: 10px;
+    box-shadow: 5px 10px 18px #bcbcbc;
+}
+
+.metricSVG {
+    position: absolute;
+    top: 508px;
+    background-color: white;
+    border: 1px solid #cbcbcb;
+    padding: 10px;
+    box-shadow: 5px 10px 18px #bcbcbc;
+    z-index: 0;
+}
+.metricSVG2 {
+    position: absolute;
+    top: 530px;
+    left: 290px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 10px;
+    z-index: 1;
+}
+.metTable {
+    border-radius: 10px;
+    border: 2px solid #666666;
+    position: absolute;
+    text-align: center;
+    width: 310px;
+    height: auto;
+    font: 13px sans-serif;
+    pointer-events: none;
+    left: 43px;
+    top: 560px;
+    z-index: 1;
+}
+.metTable table{
+    border-radius: 10px;
+    /*border-collapse: collapse;*/
+    table-layout:fixed;
+    width: 100%;
+    overflow: hidden;
+    z-index: 1;
+
+}
+.metTable td{
+    border-collapse: collapse;
+    text-align: left;
+    padding: 8px;
+    font-size: 13px;
+    z-index: 1;
+}
+.metTable tr:nth-child(odd){
+    /*border-collapse: collapse;*/
+    background-color: #f6f6f6;
+    font-size: 13px;
+    z-index: 1;
+
+}
+
+.metTable tr:nth-child(even){
+    /*border-collapse: collapse;*/
+    background-color: #e1e1e1;
+    font-size: 13px;
+    z-index: 1;
+
+}
+
+
+.metricDisplay{
+    font-size: 14px;
+}
+.dropdownList {
+    position: absolute;
     border-radius: 0px;
     z-index: 1110;
-    /*top: 94px;*/
-    left: 3px;
-    width: 200px;
+    top: 144px;
+    left: 90px;
+    width: 240px;
     height: 50px;
     border: 0px solid rgba(0,0,0, 1);
     font: normal 18px Impact, Charcoal, sans-serif !important;
-} 
+}
+.holderCP {
+    position:absolute;
+    border-radius: 0px;
+    /*left: 230px;*/
+    /*height: 50px;*/
+    border: 0px solid rgba(0,0,0, 1);
+    top: 100px;
+    background-color: white;
+    padding: 10px;
+}
+
+#mainsvg{
+
+    background-color: white;
+    position:absolute;
+    top:100px;
+    left: 400px;
+    border: 1px solid #cbcbcb;
+    padding: 10px;
+    box-shadow: 5px 10px 18px #9f9f9f;
+    overflow-x: auto;
+}
 .styled-select {
     overflow: hidden;
     height: 28px;
@@ -16,12 +134,9 @@
     margin-right: 10px;
     background: #eee;
 }
-#mainsvg{
-    position:absolute;
-    top:-10px;
-    left: 205px;
-}
-.value{font: 15px sans-serif;}
+.value{
+    font: 15px sans-serif;
+    color: #0d97ba}
 .navi ul {
     list-style-type: none;
     margin: 0;
@@ -73,7 +188,6 @@
     font: 9px helvetica;
 }
 
-<!-- For the slider -->
 .axis {
     font: 5 sans-serif;
     -webkit-user-select: none;
@@ -105,12 +219,11 @@
 }
 
 
-h3 {
-    color: #1ABC9C;
-    text-align:center;
-    font-style: italic;
-    font-size: 14px;
-    font-family: "Helvetica";
+.ws {
+    top: -30px;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: Helvetica;
 }
 
 .ticky {

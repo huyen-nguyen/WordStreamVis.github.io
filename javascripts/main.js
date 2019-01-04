@@ -1,9 +1,8 @@
-var minWidth = screen.availWidth, height = 800, gdata;
-var svg = d3.select("body").append('svg').attr({
-    width: minWidth,
-    height: height,
-    id: "mainsvg"
-
+var svg = d3.select("body").append('svg')
+    .attr({
+    width: globalWidth,
+    height: globalHeight,
+    id: "mainsvg",
 });
 var interval = 120;
 
@@ -54,71 +53,43 @@ function loadData(){
     fileName = "data/"+fileName+".tsv"; // Add data folder path
     if (fileName.indexOf("Cards_Fries")>=0){
         categories = ["increases_activity", "decreases_activity"];
-        loadAuthorData(draw, 200
+        loadAuthorData(draw, topRank200()
             ,drawTimeArcs
         );
 
     }
     else if (fileName.indexOf("Cards_PC")>=0){
         categories = ["adds_modification", "removes_modification", "increases","decreases", "binds", "translocation"];
-        loadAuthorData(draw, 200
+        loadAuthorData(draw, topRank200()
             , drawTimeArcs
         );
 
     }
     else if (fileName.indexOf("PopCha")>=0){
         categories = ["Comedy","Drama","Action", "Fantasy", "Horror"];
-        loadAuthorData(drawpop, 200
+        loadAuthorData(draw, topRank200()
             , drawTimeArcs
         );
 
     }
     else if (fileName.indexOf("IMDB")>=0){
         categories = ["Comedy","Drama","Action", "Family"];
-        loadAuthorData(draw, 45
+        loadAuthorData(draw, topRank45()
             , drawTimeArcs
         );
 
     }
     else if (fileName.indexOf("VIS")>=0){
-        categories = categories = ["Vis","VAST","InfoVis","SciVis"];
-        loadAuthorData(draw, 45
+        categories = ["Vis","VAST","InfoVis","SciVis"];
+        loadAuthorData(draw, topRank45()
             , drawTimeArcs
         );
 
     }
-    //
-    // else if (fileName.indexOf("Huffington")>=0){
-    //     categories = categories = ["person","location","organization","miscellaneous"];
-    //     loadBlogPostData(draw, 30
-    //         //, drawTimeArcs
-    //     );
-    //
-    // }
-    // else if (fileName.indexOf("CrooksAndLiars")>=0){
-    //     categories = categories = ["person","location","organization","miscellaneous"];
-    //     loadBlogPostData(draw, 30
-    //         //, drawTimeArcs
-    //     );
-    //
-    // }
-    // else if (fileName.indexOf("EmptyWheel")>=0) {
-    //     categories = categories = ["person", "location", "organization", "miscellaneous"];
-    //     loadBlogPostData(draw, 30
-    //         //, drawTimeArcs
-    //     );
-    //
-    // }
-    // else if (fileName.indexOf("Esquire")>=0) {
-    //     categories = categories = ["person", "location", "organization", "miscellaneous"];
-    //     loadBlogPostData(draw, 30
-    //         //, drawTimeArcs
-    //     );
-    //
-    // }
+
     else{
         categories = ["person","location","organization","miscellaneous"];
-        loadBlogPostData(draw, 45
+        loadBlogPostData(draw, topRank45()
             , drawTimeArcs
         );
 
@@ -126,43 +97,22 @@ function loadData(){
 }
 function loadNewData(event) {
     svg.selectAll("*").remove();
-    svg2.selectAll("*").remove();
-    svg3.selectAll("*").remove();
+    // svg2.selectAll("*").remove();
+    // svg3.selectAll("*").remove();
     fileName = this.options[this.selectedIndex].text;
+    topRank=undefined;
     loadData();
-}
-function getInputFile(){
-    var name = fileName;
-    return name;
+    d3.selectAll(".topRank").remove();
+    updateTopRank();
 }
 
-function drawpop(data){
-    draw(data, 1);
-};
 
-function drawCS(data){
-    draw(data, 2)
-}
 function drawTimeArcs(){
     timeArcs()
 }
-function draw(data, pop){
-    //Layout data
-    //
-    if (pop === 1) {
-        interval = 50;}
-    else if (pop === 2) {
-        interval = 120;}
-    else {interval = 180;}
-// function draw(data){
-//     //Layout data
-//     var dataWidth = data.length*100;
-
-    // var width = (dataWidth > minWidth) ? dataWidth:minWidth;
-
-    var width = minWidth *  4 ;
-    // var width = 1.5 * minWidth;
-    document.getElementById("mainsvg").setAttribute("width",width);
+function draw(data){
+    var width = initWidth  ;
+    var height = initHeight;
     var font = "Arial";
     var interpolation = "cardinal";
     var bias = 200;
@@ -173,11 +123,12 @@ function draw(data, pop){
         .size([width, height])
         .interpolate(interpolation)
         .fontScale(d3.scale.linear())
-        .minFontSize(10)
-        .maxFontSize(40)
+        .minFontSize(initMinFont)
+        .maxFontSize(initMaxFont)
         .data(data)
-        .font(font);
-    var boxes = ws.boxes(),
+        .font(font)
+        .flag(initFlag);
+    var boxes = ws.boxes(),     // initial boxes
         minFreq = ws.minFreq(),
         maxFreq = ws.maxFreq();
 
@@ -187,7 +138,7 @@ function draw(data, pop){
     //set svg data.
     svg.attr({
         width: width + margins.left + margins.top,
-        height: height + margins.top + margins.bottom + axisPadding + offsetLegend+legendHeight + bias
+        height: height + margins.top + margins.bottom + axisPadding + offsetLegend+legendHeight
     });
 
     var area = d3.svg.area()
@@ -289,12 +240,16 @@ function draw(data, pop){
         });
     });
 
+    console.log("all words:");
+    console.log(allWords);
     //Color based on term
-    var terms = [];
-    for(i=0; i< allWords.length; i++){
-        terms.concat(allWords[i].text);
-    }
-
+    // var terms = [];
+    // for(i=0; i< allWords.length; i++){
+    //     terms.concat(allWords[i].text);
+    // }
+    //
+    // console.log("terms:");
+    // console.log(terms);
     var opacity = d3.scale.linear()
         .domain([minFreq, maxFreq])
         .range([0.5,1]);
@@ -302,10 +257,12 @@ function draw(data, pop){
     // Add moi chu la 1 element <g>, xoay g dung d.rotate
     var placed = true; // = false de hien thi nhung tu ko dc dien
 
+    //  ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ PLACING WORDS  ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿ ✿
+
     mainGroup.selectAll('g').data(allWords).enter().append('g')
         .attr({transform: function(d){return 'translate('+d.x+', '+d.y+')rotate('+d.rotate+')';}})
         .append('text')
-        .text(function(d){return d.text;})      // add text vao g
+        .text(function(d){return d.text;})
         .attr({
             'font-family': font,
             'font-size': function(d){return d.fontSize;},
@@ -314,14 +271,15 @@ function draw(data, pop){
             'text-anchor': 'middle',
             'alignment-baseline': 'middle',
             topic: function(d){return d.topic;},
-            visibility: function(d){ return d.placed ? (placed? "visible": "hidden"): (placed? "hidden": "visible");}
+            visibility: function(d){ return d.placed ? ("visible"): ("hidden");}
         });
+
 
     // When click a term
     //Try
     var prevColor;
-    //Highlight
-    mainGroup.selectAll('text').on('mouseenter', function(){
+    // --- Highlight when mouse enter ---
+    mainGroup.selectAll('text').on('mouseenter', function(){  // hover above the word -> select this
         var thisText = d3.select(this);
         thisText.style('cursor', 'pointer');
         prevColor = thisText.attr('fill');
@@ -333,10 +291,12 @@ function draw(data, pop){
         });
         allTexts.attr({
             stroke: prevColor,
+            fill: prevColor,
             'stroke-width': 1.5
         });
     });
 
+    // --- Lowlight when mouse out ---
     mainGroup.selectAll('text').on('mouseout', function(){
         var thisText = d3.select(this);
         thisText.style('cursor', 'default');
@@ -355,13 +315,17 @@ function draw(data, pop){
         var thisText = d3.select(this);
         var text = thisText.text();
         var topic = thisText.attr('topic');
-        var allTexts = mainGroup.selectAll('text').filter(t =>{
+        var allTexts = mainGroup.selectAll('text').filter(t =>{     // group of all the same words
             return t && t.text === text &&  t.topic === topic;
         });
+        console.log("allTexts");
+        console.log(allTexts);
         // get the word out
-        //Select the data for the stream layers
-        var streamLayer = d3.select("path[topic='"+ topic+"']" )[0][0].__data__;
+        // Select the data for the stream layers
+        var streamLayer = d3.select("path[topic='"+ topic+"']" )[0][0].__data__; // at this time: not available
 
+        console.log("streamLayer:");
+        console.log(streamLayer);
         //Push all points
         var points = Array();
         //Initialize all points
@@ -372,7 +336,7 @@ function draw(data, pop){
                 y: 0//zero as default
             });
         });
-        allTexts[0].forEach(t => {
+        allTexts[0].forEach(t => {      // for each TEXT
             var data = t.__data__;
             var fontSize = data.fontSize;
             //The point
@@ -381,15 +345,15 @@ function draw(data, pop){
             //Set it to visible.
             //Clone the nodes.
             var clonedNode = t.cloneNode(true);
-            d3.select(clonedNode).attr({
+            d3.select(clonedNode).attr({        // add attribute to the cloned node
                 visibility: "visible",
                 stroke: 'none',
                 'stroke-size': 0,
             });
-            var clonedParentNode = t.parentNode.cloneNode(false);
+            var clonedParentNode = t.parentNode.cloneNode(false);   // clone ca parent nua -_- empty
             clonedParentNode.appendChild(clonedNode);
 
-            t.parentNode.parentNode.appendChild(clonedParentNode);
+            t.parentNode.parentNode.appendChild(clonedParentNode);  // append clonedParent vao grandparent
             d3.select(clonedParentNode).attr({
                 cloned: true,
                 topic: topic
@@ -418,7 +382,6 @@ function draw(data, pop){
         });
         allOtherTexts.attr('visibility', 'hidden');
     });
-
 
 
     topics.forEach(topic=>{
@@ -459,7 +422,6 @@ function draw(data, pop){
     });
 
 
-
     //  =========== TF-IDF ==============
     var sumTfidfDisplayed = 0;
     var sumTfidf = 0;
@@ -471,18 +433,6 @@ function draw(data, pop){
     });
 
     var avgTfidf = sumTfidfDisplayed/sumTfidf;
-
-
-    //  =========== Display ==============
-    // var countall = 0;
-    // var countDisplay = 0;
-    // allWords.forEach(function (d) {
-    //     countall += 1;
-    //     if (d.placed){
-    //         countDisplay += 1;
-    //     }
-    // });
-
 
     //  =========== COMPACTNESS ==============
 
@@ -527,39 +477,21 @@ function draw(data, pop){
     var weightedRate = displayFreq_1 / totalFreq_1;
     var averageNormFreq = displayNormFreq_2 / numbers_2;
 
-    // ========== WRITE ==============
-    d3.select('svg').append('g').attr({
-        width: 200,
-        height: 200}).attr('transform', 'translate(' + (margins.left) + ',' + (height + margins.top + axisPadding + legendHeight + margins.bottom+offsetLegend) + ')').append("svg:text").attr('transform','translate (0,20)').attr("class","value")
-        .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Importance value (tf-idf ratio): " + avgTfidf.toFixed(2))
-        .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Compactness: " + compactness.toFixed(2))
-        .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Area of Displayed Words = " + ratio.toFixed(2) + " ×" +
-        " Stream Area" )
-        // .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Display: " + countDisplay + " All: " + countall + " Ratio: " + (countDisplay/countall))
+    // ========== Write to box =======
 
+    var metValue = [avgTfidf.toFixed(2), compactness.toFixed(2), ratio.toFixed(2), weightedRate.toFixed(2), averageNormFreq.toFixed(3)];
 
-        .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Weighted Display Rate: " + weightedRate.toFixed(2))
-        .append("svg:tspan").attr('x', 0).attr('dy', 20).text("Average Normalized Frequency: " + averageNormFreq.toFixed(3) );
-
-    // console.log(avgTfidf.toFixed(2), compactness.toFixed(2), ratio.toFixed(2), weightedRate.toFixed(2), averageNormFreq.toFixed(3))
-    ;
-
-    // ============ Get APPROXIMATE AREA ============
-
-    // var aveX = 0, aveY1, aveY2,
-    //     sumY1 = 0, sumY2 = 0;
-    //
-    // for (var q = 0; q < boundary.length; q++){
-    //     if (boundary[q].x > aveX) {aveX = boundary[q].x};
-    //     if (q < lenb/2) {sumY1 += boundary[q].y}
-    //     else (sumY2 += boundary[q].y)
-    // };
-    // aveY1 = sumY1 / (lenb / 2);
-    // aveY2 = sumY2 / (lenb / 2);
-
-    // console.log("Area of grey region: " +totalArea);
-    // console.log("Area aprx: " + (aveY2 - aveY1)*aveX);
-    // console.log("Area within black border: "+getArea(boundary));
+    metric2.selectAll(".metricValue").remove();
+    metric2.selectAll(".metricValue")
+        .data(metValue)
+        .enter()
+        .append("text")
+        .text(d => d)
+        .attr("class","metricValue metricDisplay")
+        .attr("x","0")
+        .attr("y",(d,i) =>43+ 36*i)
+        .attr("font-weight", "bold")
+        .attr("z-index",1);
 
 
 spinner.stop();
@@ -666,4 +598,22 @@ function styleGridlineNodes(gridlineNodes){
         'stroke-width': 0.5,
         stroke: 'lightgray'
     });
+}
+function topRank200(){
+    if (topRank==undefined){
+        topRank = 200;
+    }
+    return topRank;
+}
+function topRank1000(){
+    if (topRank==undefined){
+        topRank = 1000;
+    }
+    return topRank;
+}
+function topRank45(){
+    if (topRank==undefined){
+        topRank = 45;
+    }
+    return topRank;
 }
