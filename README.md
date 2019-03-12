@@ -1,4 +1,4 @@
-## WordStream - Interactive Tool for Topic Visualization
+## WordStream - Interactive Tool for Topic Evolution
 
 Demo: https://WordStreamVis.github.io/demo.html
 
@@ -22,7 +22,7 @@ sudden attention: a word which appear repeatedly throughout the timeline conveys
 appearance. A word's sudden attention is a function of frequency, which is big when the previous timestep has small 
 frequency and this current timestep has high frequency. 
 
-![ScreenShot](https://github.com/wordstreamvis/WordStreamVis.github.io/tree/master/media/highlight.png)
+![ScreenShot](https://github.com/wordstreamvis/WordStreamVis.github.io/blob/master/media/highlight.png?raw=true)
 
 WordStream shows the remarkable topics by emphasizing them with font size and opacity.  
 
